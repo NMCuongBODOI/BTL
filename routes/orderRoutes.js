@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
+router.get('/by-date', orderController.getOrdersByDate);
 
 router.get('/', orderController.getAllOrders);              // GET /api/orders
 router.post('/', orderController.createOrder);             // POST /api/orders

@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
             data: rows
         };
     };
+    Car.associate = (models) => {
+        Car.hasMany(models.Order, { foreignKey: 'CarId' });
+    };
 
     return Car;
 };

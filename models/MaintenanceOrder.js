@@ -10,5 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'maintenanceorders',
         freezeTableName: true
     });
+    MaintenanceOrder.associate = function(models) {
+        MaintenanceOrder.belongsTo(models.User, { foreignKey: 'UserId' });
+    };
     return MaintenanceOrder;
 };

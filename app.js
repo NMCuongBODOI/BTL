@@ -27,12 +27,9 @@
         userRoutes,
         carRoutes,
         orderRoutes,
-        reviewRoutes,
-        paymentRoutes,
-        employeeRoutes,
         upImage,
         maintenanceRoutes,
-        serviceRoutes
+        serviceRoutes, testDriveRoutes
     } = require('./routes');
 
     app.use(express.json());
@@ -43,12 +40,10 @@
     app.use('/api/users', userRoutes);
     app.use('/api/cars', carRoutes);
     app.use('/api/orders', orderRoutes);
-    app.use('/api/reviews',  auth, reviewRoutes);
-    app.use('/api/payments', auth, paymentRoutes);
-    app.use('/api/employees',auth, employeeRoutes);
     app.use('/api/upload',upImage);
     app.use('/api/maintenances',maintenanceRoutes);
     app.use('/api/services', serviceRoutes);
+    app.use('/api/testDrive', testDriveRoutes);
     // Start server
     const PORT = process.env.PORT || 3000;
 

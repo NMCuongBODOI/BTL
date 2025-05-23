@@ -1,21 +1,32 @@
-const { Order, Service } = require('../models');
+const { Order, Service ,User,Car} = require('../models');
 
 exports.getAllOrders = async (req, res) => {
     try {
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 10;
-        const result = await Order.paginate(page, limit);
+        const offset = (page - 1) * limit;
+
+        const result = await Order.findAndCountAll({
+            limit,
+            offset,
+            include: [
+                { model: User, attributes: ['name'] },
+                { model: Car, attributes: ['name'] }
+            ],
+            order: [['date', 'DESC']]
+        });
+
         res.json({
-            totalItems: result.totalItems,
-            totalPages: result.totalPages,
-            currentPage: result.currentPage,
-            orders: result.data
+            totalItems: result.count,
+            totalPages: Math.ceil(result.count / limit),
+            currentPage: page,
+            orders: result.rows
         });
     } catch (err) {
-        res.status(500).json({ message: 'Error fetching orders', error: err });
+        console.error("Lỗi khi lấy danh sách đơn hàng:", err);
+        res.status(500).json({ message: 'Error fetching orders', error: err.message });
     }
 };
-
 exports.getOrderById = async (req, res) => {
     try {
         const order = await Order.findByPk(req.params.id, {
@@ -29,10 +40,10 @@ exports.getOrderById = async (req, res) => {
 };
 
 exports.createOrder = async (req, res) => {
-    const { date, status, UserId, Price, CarId, serviceIds = [] } = req.body;
+    const { date, status, UserId, Price, CarId,remaining_price,monthly_interest, serviceIds = [] } = req.body;
     console.log(req.body);
     try {
-        const newOrder = await Order.create({ date, status, UserId, Price, CarId });
+        const newOrder = await Order.create({ date, status, UserId, Price,remaining_price,monthly_interest, CarId });
 
 
         if (serviceIds.length > 0) {
@@ -82,5 +93,22 @@ exports.getTotalStats = async (req, res) => {
     } catch (err) {
         console.error("Lỗi khi lấy thống kê:", err);
         res.status(500).json({ message: "Error fetching total stats", error: err.message || err });
+    }
+};
+exports.getOrdersByDate = async (req, res) => {
+    try {
+        const { date } = req.query;
+        if (!date) {
+            return res.status(400).json({ message: "Missing date query parameter" });
+        }
+
+        const orders = await Order.findAll({
+            where: { date },
+            include: [{ model: Service }, { model: User }, { model: Car }]
+        });
+
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching orders by date", error: err.message || err });
     }
 };

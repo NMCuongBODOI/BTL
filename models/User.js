@@ -11,5 +11,15 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'user',
         freezeTableName: true
     });
+    User.associate = (models) => {
+        User.hasMany(models.Order, { foreignKey: 'UserId' });
+    };
+    User.associate = function(models) {
+        User.hasMany(models.MaintenanceOrder, { foreignKey: 'UserId' });
+    };
+    User.associate = (models) => {
+        User.hasMany(models.testDrive, { foreignKey: 'userId' });
+    };
+
     return User;
 };

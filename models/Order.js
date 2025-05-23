@@ -6,12 +6,21 @@ module.exports = (sequelize, DataTypes) => {
             date: DataTypes.DATE,
             status: DataTypes.STRING,
             UserId: DataTypes.INTEGER,
-            Price: DataTypes.INTEGER, // tổng tiền (bao gồm cả dịch vụ)
+            Price: DataTypes.INTEGER,
             CarId: DataTypes.INTEGER,
+            remaining_price: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+            },
+            monthly_interest: {
+                type: DataTypes.FLOAT,
+                defaultValue: 0,
+            },
         },
         {
             tableName: 'order',
             freezeTableName: true,
+            timestamps: false,
         }
     );
 
@@ -38,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             currentPage: page,
             data: rows,
         };
+    };
+    Order.associate = (models) => {
+        Order.belongsTo(models.User, { foreignKey: 'UserId' });
+        Order.belongsTo(models.Car, { foreignKey: 'CarId' });
     };
 
     return Order;
