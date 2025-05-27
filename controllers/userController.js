@@ -61,3 +61,27 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: 'Error deleting user', error: err });
     }
 };
+exports.searchUsersByName = async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) {
+            return res.status(400).json({ message: 'Name is required for search' });
+        }
+
+        const users = await User.findAll({
+            where: {
+                name: {
+                    [require('sequelize').Op.like]: `%${name}%`
+                }
+            }
+        });
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'No users found with this name' });
+        }
+
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: 'Error searching users by name', error: err });
+    }
+};

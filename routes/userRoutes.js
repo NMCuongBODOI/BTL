@@ -2,9 +2,13 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-router.get('/', userController.getAllUsers);           // GET /api/users
-router.get('/:id', userController.getUserById);       // GET /api/users/:id
-router.put('/:id', userController.updateUser);        // PUT /api/users/:id
-router.delete('/:id', userController.deleteUser);     // DELETE /api/users/:id
-router.get('/',userController.getUserByEmail)
+router.get('/searchByEmail', userController.getUserByEmail);
+
+router.get('/searchByName', userController.searchUsersByName);
+router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
+router.put('/:id', userController.updateUser);
+
+router.delete('/:id', userController.deleteUser);
+
 module.exports = router;

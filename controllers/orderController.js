@@ -112,3 +112,22 @@ exports.getOrdersByDate = async (req, res) => {
         res.status(500).json({ message: "Error fetching orders by date", error: err.message || err });
     }
 };
+exports.updateInstallment = async (req, res) => {
+    try {
+        const { remaining_price, status } = req.body;
+        const order = await Order.findByPk(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        order.remaining_price = remaining_price;
+        order.status = status;
+        await order.save();
+
+        res.json({ message: "Order installment updated successfully", order });
+    } catch (err) {
+        console.error("Lỗi khi cập nhật trả góp:", err);
+        res.status(500).json({ message: "Error updating installment", error: err.message || err });
+    }
+};
